@@ -191,3 +191,67 @@ async def cmd_my_profile(message: Message):
     )
     
     await message.answer(profile_text)
+
+@router.message(Command("reset"))
+async def cmd_reset(message: Message, state: FSMContext):
+    """Сброс данных пользователя"""
+    reset_keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Да, сбросить", callback_data="reset_confirm"),
+                InlineKeyboardButton(text="❌ Нет, отмена", callback_data="reset_cancel")
+            ]
+        ]
+    )
+    
+    await message.answer(
+        "⚠️ **ВНИМАНИЕ!**\n\n"
+        "Вы собираетесь сбросить все свои данные:\n"
+        "• Профиль пользователя\n"
+        "• Историю воды\n"
+        "• Историю питания\n"
+        "• Историю тренировок\n"
+        "• Все достижения и статистику\n\n"
+        "❌ **Это действие необратимо!**\n\n"
+        "Вы уверены, что хотите продолжить?",
+        reply_markup=reset_keyboard,
+        parse_mode="Markdown"
+    )
+
+@router.callback_query(F.data == "reset_confirm")
+async def reset_confirm(callback_query):
+    """Подтверждение сброса"""
+    from database.crud import get_user, create_or_update_user
+    
+    user_id = callback_query.from_user.id
+    user = get_user(user_id)
+    
+    if user:
+        # Сбрасываем цели к значениям по умолчанию
+        user_data = {
+            "user_id": user_id,
+            "water_goal": 2000,
+            "calorie_goal": 2000,
+            "weight": None,
+            "height": None,
+            "age": None,
+            "gender": "male",
+            "activity_level": "moderate",
+            "city": None
+        }
+        create_or_update_user(user_data)
+        
+        await callback_query.message.answer(
+            "✅ Ваши данные были сброшены к значениям по умолчанию.\n"
+            "Для новой настройки профиля используйте команду /set_profile"
+        )
+    else:
+        await callback_query.message.answer("❌ У вас еще нет профиля для сброса.")
+    
+    await callback_query.answer("Данные сброшены")
+
+@router.callback_query(F.data == "reset_cancel")
+async def reset_cancel(callback_query):
+    """Отмена сброса"""
+    await callback_query.message.answer("❌ Сброс данных отменен.")
+    await callback_query.answer("Отменено")

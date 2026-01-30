@@ -5,7 +5,7 @@ from typing import List, Dict, Optional
 
 def get_db_connection():
     """Получение соединения с БД"""
-    return sqlite3.connect("/app/fitness.db", check_same_thread=False)
+    return sqlite3.connect("fitness.db", check_same_thread=False)
 
 def create_or_update_user(user_data: dict):
     """Создание или обновление пользователя"""
