@@ -1,4 +1,3 @@
-# handlers/food.py
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -66,7 +65,6 @@ async def process_food_selection(callback_query, state: FSMContext):
     
     await callback_query.answer()
 
-# Этот обработчик должен быть ЗАЩИЩЕН состоянием!
 @router.message(FoodStates.entering_amount)
 async def process_food_amount(message: Message, state: FSMContext):
     try:

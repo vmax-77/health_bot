@@ -1,4 +1,3 @@
-# handlers/start.py - ВОССТАНАВЛИВАЕМ ОБРАБОТЧИКИ КНОПОК
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton

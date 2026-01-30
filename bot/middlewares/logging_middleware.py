@@ -1,4 +1,3 @@
-# middlewares/logging_middleware.py
 from aiogram import BaseMiddleware
 from aiogram.types import Message, CallbackQuery, Update
 import logging
@@ -9,7 +8,7 @@ class LoggingMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[[Any, Dict[str, Any]], Awaitable[Any]],
-        event: Update,  # Изменяем на Update
+        event: Update,
         data: Dict[str, Any]
     ) -> Any:
         user = None
@@ -44,7 +43,7 @@ class LoggingMiddleware(BaseMiddleware):
                 logging.info(log_message)
                 print(f"🔄 {log_message}")
         
-        # Логируем также ошибки
+        # Логируем ошибки
         try:
             result = await handler(event, data)
             return result
